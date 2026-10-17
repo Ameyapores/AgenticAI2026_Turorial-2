@@ -24,7 +24,6 @@ Install Python 3.11 or 3.12, unzip the participant package, and open a terminal 
 ```powershell
 py -3.11 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item api_config.example.py api_config.py
 .venv\Scripts\python.exe -m jupyter lab
 ```
 
@@ -35,7 +34,6 @@ If your Python installation is 3.12, use `py -3.12` instead.
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-cp api_config.example.py api_config.py
 .venv/bin/python -m jupyter lab
 ```
 
@@ -43,14 +41,14 @@ Use the link displayed in the terminal to open JupyterLab in a web browser.
 
 ## 2. Configure the LLM API
 
-Open `api_config.py` in the repository folder and edit the four values at the top of the file. Both the notebook and the standalone Python script read this one file.
+Open `api_config.py` in the repository folder and edit the values at the top of the file. Both the notebook and the standalone Python script read this file.
 
 - Set `PROVIDER` to `openai`, `anthropic`, or `openai_compatible`.
 - Set `MODEL` to the exact model ID you may use.
 - Paste the key into `API_KEY`.
 - For a school-hosted OpenAI-compatible API, paste its URL into `BASE_URL`; otherwise leave it blank.
 
-`api_config.py` is ignored by Git. Do not paste an API key in the notebook, screenshot it, or commit it to a repository. The existing `.env` method remains supported for deployments that require it.
+Do not paste an API key in the notebook or include a real key in a commit. Before sharing or pushing changes, restore the placeholder value in `API_KEY`.
 
 ## 3. Open the notebook
 
@@ -146,8 +144,8 @@ Version 3 uses incremental production rewards and represents the state required 
 - `Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone Python version of the tutorial.
 - `simulator.py`: synthetic process and RL learner.
 - `llm_client.py`: school API interface with call limit.
-- `api_config.example.py`: template for the local API settings file.
-- `.env.example`, `.gitignore`, `requirements.txt`: alternative configuration and setup files.
+- `api_config.py`: shared API configuration for the notebook and Python script.
+- `.gitignore`, `requirements.txt`: repository and package setup.
 - `run_benchmark.py`: reproducibly regenerate all benchmark numbers with **no API calls**.
 - `solutions/`: benchmark figures, CSVs, and JSON results for participant reference.
 

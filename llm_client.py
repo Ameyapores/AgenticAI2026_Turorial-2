@@ -57,7 +57,7 @@ def config():
         if not base:
             raise RuntimeError('OpenAI-compatible mode requires BASE_URL in api_config.py.')
     if not key:
-        raise RuntimeError('Set API_KEY in api_config.py. This file is ignored by Git.')
+        raise RuntimeError('Set API_KEY in api_config.py to your provider key.')
     return ModelConfig(p, model, key, base)
 
 

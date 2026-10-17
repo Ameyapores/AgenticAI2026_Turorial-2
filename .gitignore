@@ -1,5 +1,4 @@
 .env
-api_config.py
 .ipynb_checkpoints/
 __pycache__/
 *.pyc
