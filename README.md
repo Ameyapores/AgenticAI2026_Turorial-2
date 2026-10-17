@@ -1,4 +1,4 @@
-# U of T Fall School | Self-Improving Scientific Agents, Lab v3
+# U of T Fall School | Self-Improving Scientific Agents Lab
 
 ## The question
 
@@ -151,7 +151,7 @@ The benchmark also trains policies using five independent training seeds and eva
 | 3,000 | 73.90 | 1.29 |
 | 12,000 | 75.95 | 0.49 |
 
-Version 3 gives a reward after each action and includes the information needed to calculate the final stress penalty. The results apply only to this simulator and its stated test procedure.
+The simulator gives a reward after each action and includes the information needed to calculate the final stress penalty. The results apply only to this simulator and its stated test procedure.
 
 ## Files included
 
