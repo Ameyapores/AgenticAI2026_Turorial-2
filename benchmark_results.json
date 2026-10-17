@@ -1,0 +1,138 @@
+{
+  "environment": "Synthetic 8-step resource and stress control process",
+  "training_episodes": 12000,
+  "training_seed": 7,
+  "evaluation_seeds": [
+    10000,
+    10999
+  ],
+  "n_heldout": 1000,
+  "scores": {
+    "RL learned policy": {
+      "mean": 75.56629999999998,
+      "sd": 12.300147476267833
+    },
+    "State-aware rule": {
+      "mean": 67.47739999999999,
+      "sd": 17.031560800563852
+    },
+    "Fixed alternating": {
+      "mean": 64.832,
+      "sd": 23.32268688902982
+    },
+    "Always STEADY": {
+      "mean": 14.248000000000003,
+      "sd": 7.351662597191396
+    },
+    "Random": {
+      "mean": 28.970999999999997,
+      "sd": 18.06749881731042
+    }
+  },
+  "paired_advantage_vs_state_aware": {
+    "mean": 8.088899999999999,
+    "approx_ci95_halfwidth": 0.9773118917900765
+  },
+  "learning_progress_by_training_seed": [
+    {
+      "training_episodes": 100,
+      "training_seed": 7,
+      "heldout_mean": 65.05420000000001
+    },
+    {
+      "training_episodes": 100,
+      "training_seed": 11,
+      "heldout_mean": 56.8282
+    },
+    {
+      "training_episodes": 100,
+      "training_seed": 23,
+      "heldout_mean": 63.0312
+    },
+    {
+      "training_episodes": 100,
+      "training_seed": 31,
+      "heldout_mean": 65.48459999999999
+    },
+    {
+      "training_episodes": 100,
+      "training_seed": 42,
+      "heldout_mean": 62.923
+    },
+    {
+      "training_episodes": 500,
+      "training_seed": 7,
+      "heldout_mean": 70.6856
+    },
+    {
+      "training_episodes": 500,
+      "training_seed": 11,
+      "heldout_mean": 66.026
+    },
+    {
+      "training_episodes": 500,
+      "training_seed": 23,
+      "heldout_mean": 68.86919999999999
+    },
+    {
+      "training_episodes": 500,
+      "training_seed": 31,
+      "heldout_mean": 69.00679999999998
+    },
+    {
+      "training_episodes": 500,
+      "training_seed": 42,
+      "heldout_mean": 68.228
+    },
+    {
+      "training_episodes": 3000,
+      "training_seed": 7,
+      "heldout_mean": 73.8852
+    },
+    {
+      "training_episodes": 3000,
+      "training_seed": 11,
+      "heldout_mean": 73.379
+    },
+    {
+      "training_episodes": 3000,
+      "training_seed": 23,
+      "heldout_mean": 75.7084
+    },
+    {
+      "training_episodes": 3000,
+      "training_seed": 31,
+      "heldout_mean": 74.3372
+    },
+    {
+      "training_episodes": 3000,
+      "training_seed": 42,
+      "heldout_mean": 72.1926
+    },
+    {
+      "training_episodes": 12000,
+      "training_seed": 7,
+      "heldout_mean": 75.591
+    },
+    {
+      "training_episodes": 12000,
+      "training_seed": 11,
+      "heldout_mean": 76.38220000000001
+    },
+    {
+      "training_episodes": 12000,
+      "training_seed": 23,
+      "heldout_mean": 76.49719999999999
+    },
+    {
+      "training_episodes": 12000,
+      "training_seed": 31,
+      "heldout_mean": 75.37719999999999
+    },
+    {
+      "training_episodes": 12000,
+      "training_seed": 42,
+      "heldout_mean": 75.89419999999998
+    }
+  ]
+}

@@ -115,7 +115,7 @@ def ask_json(prompt: str, *, max_tokens: int=1000) -> dict:
 def connection_check():
     cfg=config()
     # A genuine call is required to confirm the provided credentials work.
-    reply=ask_text('Reply with the single word READY.', max_tokens=48)
+    reply=ask_text('Reply with the single word READY.', max_tokens=400)
     print(f'Live model connection: {cfg.provider} / {cfg.model}')
     print('Model replied:', reply.strip()[:120])
     return cfg

@@ -1,0 +1,6 @@
+policy,mean_return,sd_across_runs,se_mean,n
+RL learned policy,75.57,12.3,0.39,1000
+State-aware rule,67.48,17.03,0.54,1000
+Fixed alternating,64.83,23.32,0.74,1000
+Random,28.97,18.07,0.57,1000
+Always STEADY,14.25,7.35,0.23,1000
