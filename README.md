@@ -2,18 +2,18 @@
 
 ## The question
 
-When does training a decision policy improve performance relative to a fixed workflow or a reasoning model used for planning?
+When does a learned decision rule improve results compared with a fixed rule or a language model that chooses actions from the available information?
 
 This repository contains a synthetic eight-step resource-and-stress control experiment. It is not a validated physical or biological model. The lab compares:
 
 1. Random interventions.
 2. Always STEADY, a fixed protocol.
 3. Fixed alternating BOOST / REST, another fixed protocol.
-4. A state-aware handwritten rule that reacts to measured state.
-5. An RL-trained controller, with a separate tabular Q-policy and unchanged LLM weights.
-6. An LLM with current-context reasoning, compared with the same LLM supplied with lessons from six prior campaigns.
+4. A state-aware rule that uses the observed nutrient and stress values.
+5. A reinforcement-learning (RL) controller that learns values for state-action combinations; the language-model weights do not change.
+6. A language model using current information, compared with the same model supplied with lessons from six earlier runs.
 
-The first five methods are benchmarked over 1,000 held-out simulated campaigns. The LLM demonstration uses one paired seed and cannot establish statistical superiority. The RL controller is trained on substantially more simulated experience than the LLM-memory condition.
+The first five methods are tested on 1,000 simulated runs not used for training. The language-model demonstration uses one paired seed, so it cannot establish a general performance difference. The RL controller receives more simulated training runs than the language-model memory condition.
 
 ## 1. Install software
 
@@ -41,11 +41,11 @@ Use the link displayed in the terminal to open JupyterLab in a web browser.
 
 ## 2. Configure the LLM API
 
-Copy `api_config.py` to `api_config_local.py`, then paste your OpenRouter key into `API_KEY` in `api_config_local.py`. The provider, model ID, and endpoint are already set for OpenRouter. The local file is ignored by Git, and both the notebook and the standalone Python script read it.
+Copy `api_config.py` to `api_config_local.py`, then paste your OpenRouter key into `API_KEY` in `api_config_local.py`. The provider, model ID, and endpoint are already set for OpenRouter. The local file is ignored by Git, and both the notebook and the Python script read it. A key in `api_config.py` also works locally, but that file is tracked by Git and must never be committed with a real key.
 
 The current settings are `PROVIDER = "openai_compatible"`, `MODEL = "openai/gpt-5.6-luna"`, and `BASE_URL = "https://openrouter.ai/api/v1"`. Change these only if you use a different provider or model.
 
-Do not paste an API key in the notebook or include a real key in a commit. Before sharing or pushing changes, restore the placeholder value in `API_KEY`.
+Do not paste an API key in the notebook or include a real key in a commit.
 
 ## 3. Open the notebook
 
@@ -71,13 +71,13 @@ The parameter exercise is intended to be run before the LLM sections. Running al
 
 ## 4. The experiment you will run
 
-Each campaign has eight decisions. At every step, the system has a **nutrient level** and **stress level**. You can REST to recover, use a STEADY intervention for smaller production, or BOOST for larger but riskier production. An occasional random disturbance removes nutrient. Actions affect future resources, future risks, and the final outcome.
+Each run has eight decisions. At every step, the system has a **nutrient level** and **stress level**. `REST` recovers nutrient and lowers stress. `STEADY` can produce a smaller amount. `BOOST` can produce more but uses more nutrient and increases stress. A random event may remove nutrient. Each action affects the next state and the final result.
 
 Reward: **4 × total simulated production − total intervention costs − 5 × final stress**.
 
 ### Reference benchmark
 
-Run Section 2. Its expected result (seed 7; 1,000 held-out campaigns) is approximately:
+Run the benchmark section. Its expected result (training seed 7; 1,000 test runs) is approximately:
 
 | Controller | Mean simulated reward |
 |---|---:|
@@ -97,20 +97,22 @@ Section 3 contains:
 TRY_TRAIN_EPISODES = 100  # Try 500, 3_000, 12_000
 ```
 
-Start with 100 and rerun that cell. Compare the trained controller to the *original 12,000-run controller* and the state-aware baseline. Then try 3,000 or 12,000. No extra LLM API calls are needed.
+Start with 100 and rerun that cell. Compare the learned controller with the *original 12,000-run controller* and the state-aware rule. Then try 3,000 or 12,000. No language-model API calls are needed.
 
-The following cell repeats training with **five seeds** so you can see whether the improvement is reproducible rather than a lucky single run.
+The following cell repeats training with **five seeds** to show whether the result is consistent across training runs.
 
 ### Memory and reasoning vs RL
 
-Sections 4 and 5 require the school's live LLM API. They:
+The memory and language-model sections require the live API. They:
 
 1. Collect six example trajectories from predefined protocols.
 2. Ask the LLM to turn them into reusable lessons.
-3. Run the same reasoning model once using only current context and once with saved memory.
-4. Compare the outcomes with RL and a handwritten baseline on the same seeded task.
+3. Run the same language model once using current information only and once with saved memory.
+4. Compare the outcomes with RL and a fixed rule using the same starting seed.
 
-The LLM comparison consists of one run per condition and is not an estimate of expected LLM performance. The notebook has not been tested against the school's production endpoint.
+The language-model comparison consists of one run per condition and is not an estimate of typical language-model performance.
+
+See [Policy descriptions](POLICY_DESCRIPTION.md) for the rules, prompts, and evaluation settings.
 
 ## Instructional sequence
 
@@ -122,9 +124,9 @@ The following sequence is suitable for a 25- to 30-minute session.
 | Reference benchmark | 5 min | Run Section 2 and examine the 1,000-seed comparison. |
 | Parameter exercise | 5 min | Set `TRY_TRAIN_EPISODES=100`, compare it with 12,000, and optionally repeat at 3,000. |
 | Learning curve | 3 min | Review the five-training-seed results and their dispersion. |
-| Memory construction | 4 min | Use the API to summarize six prior trajectories as reusable guidance. |
-| LLM comparison | 6 min | Run context-only and memory-augmented conditions once, then inspect the action traces. |
-| Discussion | 3 min | Discuss the assumptions required for repeated-interaction policy learning. |
+| Memory construction | 4 min | Use the API to summarize six earlier runs as reusable guidance. |
+| Language-model comparison | 6 min | Run the current-information and memory conditions once, then inspect the action traces. |
+| Discussion | 3 min | Discuss the assumptions needed to learn from repeated runs. |
 
 ## Reproducible benchmark results
 
@@ -149,14 +151,14 @@ The benchmark also trains policies using five independent training seeds and eva
 | 3,000 | 73.90 | 1.29 |
 | 12,000 | 75.95 | 0.49 |
 
-Version 3 uses incremental production rewards and represents the state required for the delayed terminal stress penalty. This gives Q-learning a finite-horizon Markov process under the stated simulator. The results apply only to this implementation and its evaluation protocol.
+Version 3 gives a reward after each action and includes the information needed to calculate the final stress penalty. The results apply only to this simulator and its stated test procedure.
 
 ## Files included
 
 - `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`: tutorial notebook.
 - `Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone Python version of the tutorial.
 - `simulator.py`: synthetic process and RL learner.
-- `llm_client.py`: school API interface with call limit.
+- `llm_client.py`: API interface with a call limit.
 - `api_config.py`: shareable API configuration template.
 - `api_config_local.py`: ignored local configuration containing the API key; create it by copying `api_config.py`.
 - `.gitignore`, `requirements.txt`: repository and package setup.
@@ -165,7 +167,7 @@ Version 3 uses incremental production rewards and represents the state required 
 
 ## Troubleshooting
 
-**Authentication errors:** verify `LAB_LLM_PROVIDER`, `LAB_LLM_MODEL`, and the exact key/base URL in `.env`. Ask the organizer about rate limits.
+**Authentication errors:** verify the provider, model, API key, and base URL in `api_config_local.py` or `api_config.py`. Ask the organizer about rate limits.
 
 **ModuleNotFoundError:** use the Jupyter Python kernel created by your `.venv`, and install all packages with that environment's Python.
 
@@ -173,8 +175,8 @@ Version 3 uses incremental production rewards and represents the state required 
 
 **Model produces malformed JSON:** the helper may use a second live call to repair it; after the call cap it raises an error rather than silently substitute data.
 
-**No RL benefit:** check that `TRAIN_EPISODES` is 12,000, the test uses the same reward settings as training, and the script was not accidentally modified. After changing environment dynamics, retrain the policy before evaluating on the altered environment.
+**No RL benefit:** check that `TRAIN_EPISODES` is 12,000, the test uses the same reward settings as training, and the script was not changed. After changing the simulator, train the policy again before testing it.
 
 ## Scientific limitations
 
-This synthetic experiment makes state-dependent sequential decisions relevant by construction. The results do not establish general superiority over carefully specified scripted controllers or LLMs. The memory condition receives six historical episodes, whereas RL receives thousands. Real scientific deployment requires independent validation, safety constraints, and an appropriate comparison of experience, computation, and API costs.
+This synthetic experiment is designed so that actions affect later decisions. The results do not show that RL is generally better than other fixed rules or language models. The memory condition receives six earlier runs, whereas RL receives thousands. A real scientific use would require independent validation, safety constraints, and comparison of data, computation, and API costs.
