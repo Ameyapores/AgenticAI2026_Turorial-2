@@ -2,18 +2,18 @@
 
 ## The question
 
-**When do we gain something by training a decision policy, instead of using a fixed workflow or simply asking a reasoning model to plan?**
+When does training a decision policy improve performance relative to a fixed workflow or a reasoning model used for planning?
 
-This is a completely synthetic eight-step resource-and-stress control experiment. It is **not a validated physical or biological model**. The classroom demo compares:
+This repository contains a synthetic eight-step resource-and-stress control experiment. It is not a validated physical or biological model. The lab compares:
 
 1. Random interventions.
 2. Always STEADY, a fixed protocol.
 3. Fixed alternating BOOST / REST, another fixed protocol.
-4. State-aware handwritten rule, a stronger baseline that reacts to measured state.
+4. A state-aware handwritten rule that reacts to measured state.
 5. An RL-trained controller, with a separate tabular Q-policy and unchanged LLM weights.
-6. A live LLM with current-context reasoning, versus the same LLM with lessons from six past campaigns.
+6. An LLM with current-context reasoning, compared with the same LLM supplied with lessons from six prior campaigns.
 
-The first five methods are benchmarked over 1,000 held-out simulated campaigns. The live LLM demonstration uses one paired seed and **cannot establish statistical superiority**. The RL controller is trained on far more simulated experience than the LLM-memory demo has.
+The first five methods are benchmarked over 1,000 held-out simulated campaigns. The LLM demonstration uses one paired seed and cannot establish statistical superiority. The RL controller is trained on substantially more simulated experience than the LLM-memory condition.
 
 ## 1. Install software
 
@@ -55,7 +55,7 @@ The default `.env.example` includes placeholders, **not working credentials**. D
 
 In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Select the Python kernel from `.venv` (Jupyter may prompt you to install/register it). Start with **Run All**. The first code cell checks the school API with a real call; it will stop if the key or endpoint is invalid.
 
-**During the tutorial, the presenter will pause at the parameter exercise**. If you use Run All before class, the notebook will also make live model calls in its last sections. Expect approximately 18 calls plus retries, subject to `LAB_MAX_MODEL_CALLS`.
+The parameter exercise is intended to be run before the LLM sections. Running all notebook cells also makes model calls in the final sections. One paired demonstration uses approximately 18 calls plus possible retries, subject to `LAB_MAX_MODEL_CALLS`.
 
 ## 4. The experiment you will run
 
@@ -75,7 +75,7 @@ Run Section 2. Its expected result (seed 7; 1,000 held-out campaigns) is approxi
 | Random | 28.97 |
 | Always STEADY | 14.25 |
 
-The paired difference between RL and the state-aware rule is **8.09 reward points**, approximate 95% CI **[7.11, 9.07]**. This does not imply RL would beat an optimal hand-coded policy or a strong LLM in general.
+The paired difference between RL and the state-aware rule is 8.09 reward points, with an approximate 95% interval of [7.11, 9.07]. This result does not establish performance relative to an optimal hand-coded policy or an LLM in other settings.
 
 ### Change one number
 
@@ -98,7 +98,46 @@ Sections 4 and 5 require the school's live LLM API. They:
 3. Run the same reasoning model once using only current context and once with saved memory.
 4. Compare the outcomes with RL and a handwritten baseline on the same seeded task.
 
-**Interpret the live LLM results cautiously**: one run per condition is a teaching demonstration, not an estimate of expected LLM performance. We have not verified the notebooks against the school's real endpoint.
+The LLM comparison consists of one run per condition and is not an estimate of expected LLM performance. The notebook has not been tested against the school's production endpoint.
+
+## Instructional sequence
+
+The following sequence is suitable for a 25- to 30-minute session.
+
+| Segment | Suggested time | Activity |
+|---|---:|---|
+| Motivation | 3 min | Introduce resource depletion and stress as sequential state variables. |
+| Reference benchmark | 5 min | Run Section 2 and examine the 1,000-seed comparison. |
+| Parameter exercise | 5 min | Set `TRY_TRAIN_EPISODES=100`, compare it with 12,000, and optionally repeat at 3,000. |
+| Learning curve | 3 min | Review the five-training-seed results and their dispersion. |
+| Memory construction | 4 min | Use the API to summarize six prior trajectories as reusable guidance. |
+| LLM comparison | 6 min | Run context-only and memory-augmented conditions once, then inspect the action traces. |
+| Discussion | 3 min | Discuss the assumptions required for repeated-interaction policy learning. |
+
+## Reproducible benchmark results
+
+Run `python run_benchmark.py` to reproduce the simulator-only analysis. It does not make API calls. With training seed 7, 12,000 training campaigns, and evaluation seeds 10,000–10,999, the results are:
+
+| Controller | Mean return | SD across runs |
+|---|---:|---:|
+| RL learned policy | 75.57 | 12.30 |
+| State-aware rule | 67.48 | 17.03 |
+| Fixed BOOST/REST alternation | 64.83 | 23.32 |
+| Random | 28.97 | 18.07 |
+| Always STEADY | 14.25 | 7.35 |
+
+The paired RL-minus-state-aware difference is 8.09 points, with an approximate 95% interval of [7.11, 9.07]. A shared seed fixes initial conditions but not the full stochastic path when policies take different actions.
+
+The benchmark also trains policies using five independent training seeds and evaluates each on 500 held-out campaigns.
+
+| Training campaigns | Mean RL return | SD across training seeds |
+|---:|---:|---:|
+| 100 | 62.66 | 3.46 |
+| 500 | 68.56 | 1.68 |
+| 3,000 | 73.90 | 1.29 |
+| 12,000 | 75.95 | 0.49 |
+
+Version 3 uses incremental production rewards and represents the state required for the delayed terminal stress penalty. This gives Q-learning a finite-horizon Markov process under the stated simulator. The results apply only to this implementation and its evaluation protocol.
 
 ## Files included
 
@@ -109,7 +148,6 @@ Sections 4 and 5 require the school's live LLM API. They:
 - `.env.example`, `.gitignore`, `requirements.txt`: setup.
 - `run_benchmark.py`: reproducibly regenerate all benchmark numbers with **no API calls**.
 - `solutions/`: benchmark figures, CSVs, and JSON results for participant reference.
-- `INSTRUCTOR_GUIDE.md`: teaching plan and scientific caveats.
 
 ## Troubleshooting
 
@@ -125,4 +163,4 @@ Sections 4 and 5 require the school's live LLM API. They:
 
 ## Scientific limitations
 
-This synthetic experiment was designed to make state-dependent, sequential decisions matter. The result is genuine for the stated setup, but it does **not** prove universal superiority over a carefully tuned scripted controller or a strong LLM. Model-memory conditions receive six historical episodes; RL receives thousands. Real scientific deployment requires independent experimental validation, instrument safety constraints, and an appropriate comparison of experience, computing and API costs.
+This synthetic experiment makes state-dependent sequential decisions relevant by construction. The results do not establish general superiority over carefully specified scripted controllers or LLMs. The memory condition receives six historical episodes, whereas RL receives thousands. Real scientific deployment requires independent validation, safety constraints, and an appropriate comparison of experience, computation, and API costs.
