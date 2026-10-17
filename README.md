@@ -49,7 +49,7 @@ Do not paste an API key in the notebook or include a real key in a commit.
 
 ## 3. Open the notebook
 
-In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Select the Python kernel from `.venv` (Jupyter may prompt you to install/register it). Start with **Run All**. The first code cell checks the school API with a real call; it will stop if the key or endpoint is invalid.
+In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL.ipynb`. Select the Python kernel from `.venv` (Jupyter may prompt you to install/register it). Start with **Run All**. The first code cell checks the school API with a real call; it will stop if the key or endpoint is invalid.
 
 ### Run it in VS Code
 
@@ -62,7 +62,7 @@ In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Select the Py
    .venv/bin/python -m pip install -r requirements.txt
    ```
 
-4. Open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Choose **Select Kernel** in the upper right, then choose the Python environment at `.venv/bin/python`.
+4. Open `Self_Improving_Agents_Memory_vs_RL.ipynb`. Choose **Select Kernel** in the upper right, then choose the Python environment at `.venv/bin/python`.
 5. Choose **Clear All Outputs** in the notebook toolbar, then run the first code cell. It sends a real API request. If it succeeds, use **Run All** or run cells individually.
 
 The notebook stores previous outputs. This copy may show an old `.env` configuration error until its outputs are cleared. In VS Code, select the local `.venv` kernel; a Jupyter Server password is not needed for that local kernel.
@@ -155,8 +155,8 @@ The simulator gives a reward after each action and includes the information need
 
 ## Files included
 
-- `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`: tutorial notebook.
-- `Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone Python version of the tutorial.
+- `Self_Improving_Agents_Memory_vs_RL.ipynb`: tutorial notebook.
+- `Self_Improving_Agents_Memory_vs_RL.py`: standalone Python version of the tutorial.
 - `simulator.py`: synthetic process and RL learner.
 - `llm_client.py`: API interface with a call limit.
 - `api_config.py`: shareable API configuration template.

@@ -1,6 +1,6 @@
 # Policy descriptions
 
-This document describes the policies evaluated in `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. The process is synthetic and has eight decision stages. At each stage, the observed state is `(step, nutrient, stress)`. Available actions are `REST`, `STEADY`, and `BOOST`.
+This document describes the policies evaluated in `Self_Improving_Agents_Memory_vs_RL.ipynb`. The process is synthetic and has eight decision stages. At each stage, the observed state is `(step, nutrient, stress)`. Available actions are `REST`, `STEADY`, and `BOOST`.
 
 ## Environment and objective
 
