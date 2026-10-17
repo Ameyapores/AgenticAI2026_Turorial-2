@@ -9,8 +9,26 @@ from dataclasses import dataclass
 from dotenv import load_dotenv
 
 load_dotenv()
+try:
+    import api_config as _local_config
+except ModuleNotFoundError:
+    _local_config = None
+
+
+def _setting(name: str, *environment_names: str) -> str:
+    """Read the local configuration file first, then the legacy .env file."""
+    value = getattr(_local_config, name, '') if _local_config else ''
+    if value and not str(value).startswith(('PASTE_', 'REPLACE_')):
+        return str(value).strip()
+    for environment_name in environment_names:
+        value = os.getenv(environment_name, '')
+        if value:
+            return value.strip()
+    return ''
+
+
 _REQUESTS = 0
-MAX_REQUESTS = int(os.getenv('LAB_MAX_MODEL_CALLS', '12'))
+MAX_REQUESTS = int(_setting('MAX_MODEL_CALLS', 'LAB_MAX_MODEL_CALLS') or '12')
 
 @dataclass
 class ModelConfig:
@@ -21,25 +39,25 @@ class ModelConfig:
 
 
 def config():
-    p = os.getenv('LAB_LLM_PROVIDER', '').strip().lower()
-    model = os.getenv('LAB_LLM_MODEL', '').strip()
+    p = _setting('PROVIDER', 'LAB_LLM_PROVIDER').lower()
+    model = _setting('MODEL', 'LAB_LLM_MODEL')
     if p not in ('anthropic', 'openai', 'openai_compatible'):
-        raise RuntimeError('Set LAB_LLM_PROVIDER to anthropic, openai, or openai_compatible in your .env file.')
+        raise RuntimeError('Set PROVIDER in api_config.py to anthropic, openai, or openai_compatible.')
     if not model:
-        raise RuntimeError('Set LAB_LLM_MODEL to the exact model name supplied by the school.')
+        raise RuntimeError('Set MODEL in api_config.py to the model name supplied by the school.')
     if p == 'anthropic':
-        key = os.getenv('ANTHROPIC_API_KEY', '') or os.getenv('SCHOOL_LLM_API_KEY','')
-        base = os.getenv('ANTHROPIC_BASE_URL', '') or None
+        key = _setting('API_KEY', 'ANTHROPIC_API_KEY', 'SCHOOL_LLM_API_KEY')
+        base = _setting('BASE_URL', 'ANTHROPIC_BASE_URL') or None
     elif p == 'openai':
-        key = os.getenv('OPENAI_API_KEY','') or os.getenv('SCHOOL_LLM_API_KEY','')
-        base = os.getenv('OPENAI_BASE_URL','') or None
+        key = _setting('API_KEY', 'OPENAI_API_KEY', 'SCHOOL_LLM_API_KEY')
+        base = _setting('BASE_URL', 'OPENAI_BASE_URL') or None
     else:
-        key = os.getenv('SCHOOL_LLM_API_KEY','') or os.getenv('OPENAI_API_KEY','')
-        base = os.getenv('SCHOOL_LLM_API_BASE','') or os.getenv('OPENAI_BASE_URL','')
+        key = _setting('API_KEY', 'SCHOOL_LLM_API_KEY', 'OPENAI_API_KEY')
+        base = _setting('BASE_URL', 'SCHOOL_LLM_API_BASE', 'OPENAI_BASE_URL')
         if not base:
-            raise RuntimeError('OpenAI-compatible mode requires SCHOOL_LLM_API_BASE or OPENAI_BASE_URL.')
+            raise RuntimeError('OpenAI-compatible mode requires BASE_URL in api_config.py.')
     if not key:
-        raise RuntimeError('No API key. Set ANTHROPIC_API_KEY, OPENAI_API_KEY, or SCHOOL_LLM_API_KEY.')
+        raise RuntimeError('Set API_KEY in api_config.py. This file is ignored by Git.')
     return ModelConfig(p, model, key, base)
 
 

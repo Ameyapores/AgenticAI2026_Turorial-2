@@ -24,7 +24,7 @@ Install Python 3.11 or 3.12, unzip the participant package, and open a terminal 
 ```powershell
 py -3.11 -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item .env.example .env
+Copy-Item api_config.example.py api_config.py
 .venv\Scripts\python.exe -m jupyter lab
 ```
 
@@ -35,21 +35,22 @@ If your Python installation is 3.12, use `py -3.12` instead.
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
-cp .env.example .env
+cp api_config.example.py api_config.py
 .venv/bin/python -m jupyter lab
 ```
 
 Use the link displayed in the terminal to open JupyterLab in a web browser.
 
-## 2. Configure the school-provided LLM API
+## 2. Configure the LLM API
 
-Before launching Jupyter, edit `.env` with the provider, exact model ID, API key and API URL your Fall School organizers provide. The `.env.example` file supports three routes:
+Open `api_config.py` in the repository folder and edit the four values at the top of the file. Both the notebook and the standalone Python script read this one file.
 
-- `LAB_LLM_PROVIDER=anthropic` using `ANTHROPIC_API_KEY`
-- `LAB_LLM_PROVIDER=openai` using `OPENAI_API_KEY`
-- `LAB_LLM_PROVIDER=openai_compatible` using `SCHOOL_LLM_API_KEY` and `SCHOOL_LLM_API_BASE`
+- Set `PROVIDER` to `openai`, `anthropic`, or `openai_compatible`.
+- Set `MODEL` to the exact model ID you may use.
+- Paste the key into `API_KEY`.
+- For a school-hosted OpenAI-compatible API, paste its URL into `BASE_URL`; otherwise leave it blank.
 
-The default `.env.example` includes placeholders, **not working credentials**. Do not paste an API key in the notebook, screenshot it, or commit `.env` to a Git repository.
+`api_config.py` is ignored by Git. Do not paste an API key in the notebook, screenshot it, or commit it to a repository. The existing `.env` method remains supported for deployments that require it.
 
 ## 3. Open the notebook
 
@@ -145,7 +146,8 @@ Version 3 uses incremental production rewards and represents the state required 
 - `Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone Python version of the tutorial.
 - `simulator.py`: synthetic process and RL learner.
 - `llm_client.py`: school API interface with call limit.
-- `.env.example`, `.gitignore`, `requirements.txt`: setup.
+- `api_config.example.py`: template for the local API settings file.
+- `.env.example`, `.gitignore`, `requirements.txt`: alternative configuration and setup files.
 - `run_benchmark.py`: reproducibly regenerate all benchmark numbers with **no API calls**.
 - `solutions/`: benchmark figures, CSVs, and JSON results for participant reference.
 
