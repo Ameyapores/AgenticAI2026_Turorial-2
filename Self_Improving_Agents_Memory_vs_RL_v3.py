@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from IPython.display import display
-from simulator import ACTIONS, HORIZON, SyntheticProcess, train_q_learning, run_episode, evaluate_many, report
+from simulator import ACTIONS, HORIZON, SyntheticProcess, train_q_learning, run_episode, evaluate_many, evaluate_custom_rule, report
 from llm_client import connection_check, ask_json, ask_text
 
 SEED = 7
@@ -47,6 +47,30 @@ ax.set_xlabel('Mean total reward across 1,000 unseen experiments')
 ax.set_title('How much better is the learned policy?')
 ax.spines[['top','right']].set_visible(False)
 plt.tight_layout(); plt.show()
+
+# Participant exercise: edit only the function below, then run this section.
+# Return exactly one action label: "REST", "STEADY", or "BOOST".
+def participant_rule(state):
+    step, nutrient, stress = state
+    if nutrient >= 3 and stress == 0:
+        return "BOOST"
+    if nutrient == 0 or stress >= 2:
+        return "REST"
+    return "STEADY"
+
+participant_scores = evaluate_custom_rule(participant_rule, seeds=EVAL_SEEDS)
+participant_comparison = report({
+    'Participant rule': participant_scores,
+    'Reference state-aware rule': score_arrays['State-aware rule'],
+    'RL reference': score_arrays['RL'],
+})
+display(participant_comparison)
+
+participant_total, participant_trace = run_episode(
+    'Custom rule', seed=2026, custom_rule=participant_rule
+)
+print('Participant-rule score on example seed:', round(participant_total, 2))
+display(pd.DataFrame(participant_trace)[['step', 'before', 'action', 'after', 'gain', 'reward']])
 
 TRY_TRAIN_EPISODES = 100  # CHANGE ME: try 500, 3_000, 12_000
 

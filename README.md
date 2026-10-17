@@ -41,7 +41,7 @@ Use the link displayed in the terminal to open JupyterLab in a web browser.
 
 ## 2. Configure the LLM API
 
-Open `api_config.py` in the repository folder and paste your OpenRouter key into `API_KEY`. The provider, model ID, and endpoint are already set for OpenRouter. Both the notebook and the standalone Python script read this file.
+Copy `api_config.py` to `api_config_local.py`, then paste your OpenRouter key into `API_KEY` in `api_config_local.py`. The provider, model ID, and endpoint are already set for OpenRouter. The local file is ignored by Git, and both the notebook and the standalone Python script read it.
 
 The current settings are `PROVIDER = "openai_compatible"`, `MODEL = "openai/gpt-5.6-luna"`, and `BASE_URL = "https://openrouter.ai/api/v1"`. Change these only if you use a different provider or model.
 
@@ -50,6 +50,22 @@ Do not paste an API key in the notebook or include a real key in a commit. Befor
 ## 3. Open the notebook
 
 In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Select the Python kernel from `.venv` (Jupyter may prompt you to install/register it). Start with **Run All**. The first code cell checks the school API with a real call; it will stop if the key or endpoint is invalid.
+
+### Run it in VS Code
+
+1. Install the Microsoft **Python** and **Jupyter** extensions in VS Code.
+2. Use **File → Open Folder** and open the repository folder (the folder containing `simulator.py`, `llm_client.py`, and `api_config.py`). Do not open the notebook as an isolated file.
+3. Open the integrated terminal. If `.venv` has not been created on this computer, run:
+
+   ```bash
+   python3 -m venv .venv
+   .venv/bin/python -m pip install -r requirements.txt
+   ```
+
+4. Open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Choose **Select Kernel** in the upper right, then choose the Python environment at `.venv/bin/python`.
+5. Choose **Clear All Outputs** in the notebook toolbar, then run the first code cell. It sends a real API request. If it succeeds, use **Run All** or run cells individually.
+
+The notebook stores previous outputs. This copy may show an old `.env` configuration error until its outputs are cleared. In VS Code, select the local `.venv` kernel; a Jupyter Server password is not needed for that local kernel.
 
 The parameter exercise is intended to be run before the LLM sections. Running all notebook cells also makes model calls in the final sections. One paired demonstration uses approximately 18 calls plus possible retries, subject to `LAB_MAX_MODEL_CALLS`.
 
@@ -141,7 +157,8 @@ Version 3 uses incremental production rewards and represents the state required 
 - `Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone Python version of the tutorial.
 - `simulator.py`: synthetic process and RL learner.
 - `llm_client.py`: school API interface with call limit.
-- `api_config.py`: shared API configuration for the notebook and Python script.
+- `api_config.py`: shareable API configuration template.
+- `api_config_local.py`: ignored local configuration containing the API key; create it by copying `api_config.py`.
 - `.gitignore`, `requirements.txt`: repository and package setup.
 - `run_benchmark.py`: reproducibly regenerate all benchmark numbers with **no API calls**.
 - `solutions/`: benchmark figures, CSVs, and JSON results for participant reference.

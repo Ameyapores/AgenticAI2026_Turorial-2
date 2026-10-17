@@ -10,16 +10,21 @@ from dotenv import load_dotenv
 
 load_dotenv()
 try:
-    import api_config as _local_config
+    import api_config_local as _private_config
 except ModuleNotFoundError:
-    _local_config = None
+    _private_config = None
+try:
+    import api_config as _template_config
+except ModuleNotFoundError:
+    _template_config = None
 
 
 def _setting(name: str, *environment_names: str) -> str:
-    """Read the local configuration file first, then the legacy .env file."""
-    value = getattr(_local_config, name, '') if _local_config else ''
-    if value and not str(value).startswith(('PASTE_', 'REPLACE_')):
-        return str(value).strip()
+    """Read the private override, template, then legacy environment settings."""
+    for config_module in (_private_config, _template_config):
+        value = getattr(config_module, name, '') if config_module else ''
+        if value and not str(value).startswith(('PASTE_', 'REPLACE_')):
+            return str(value).strip()
     for environment_name in environment_names:
         value = os.getenv(environment_name, '')
         if value:

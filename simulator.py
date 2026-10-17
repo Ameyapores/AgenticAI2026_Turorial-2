@@ -131,10 +131,11 @@ def train_q_learning(episodes: int = 12000, seed: int = 7,
 def run_episode(policy: str, seed: int, q=None,
                 disturbance_prob: float = .10,
                 final_stress_penalty: float = 5.,
-                live_agent=None):
+                live_agent=None, custom_rule=None):
     """Run and log one episode.
 
     A live_agent callable receives (state, prior_trace) and returns (action, reason).
+    A custom_rule callable receives state and returns REST, STEADY, or BOOST.
     The same observations, action choices, and reward are exposed to each policy.
     """
     lab = SyntheticProcess(seed, disturbance_prob=disturbance_prob,
@@ -153,6 +154,20 @@ def run_episode(policy: str, seed: int, q=None,
         elif policy == "LLM":
             if live_agent is None: raise ValueError("Missing live LLM callback")
             action, reason = live_agent(state, trace)
+        elif policy == "Custom rule":
+            if custom_rule is None:
+                raise ValueError("Pass custom_rule for Custom rule evaluation")
+            selected = custom_rule(state)
+            if isinstance(selected, str):
+                selected = selected.strip().upper()
+                if selected not in ACTIONS:
+                    raise ValueError("A custom rule must return REST, STEADY, or BOOST")
+                action = ACTIONS.index(selected)
+            else:
+                action = int(selected)
+                if action not in range(len(ACTIONS)):
+                    raise ValueError("A custom rule must return REST, STEADY, or BOOST")
+            reason = "Participant-defined decision rule"
         else:
             action = scripted_action(state, policy)
             reason = "Predefined decision rule"
@@ -164,6 +179,17 @@ def run_episode(policy: str, seed: int, q=None,
                       "gain": info['gain'], "reward": round(reward, 2),
                       "why": reason})
     return float(total), trace
+
+
+def evaluate_custom_rule(custom_rule, seeds=range(10000, 11000),
+                         disturbance_prob=.10, final_stress_penalty=5.):
+    """Evaluate a participant-defined state-to-action rule on shared seeds."""
+    return np.array([
+        run_episode("Custom rule", seed=int(s), custom_rule=custom_rule,
+                    disturbance_prob=disturbance_prob,
+                    final_stress_penalty=final_stress_penalty)[0]
+        for s in seeds
+    ], dtype=float)
 
 
 def evaluate_many(policies, seeds=range(10000, 11000),
