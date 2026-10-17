@@ -41,12 +41,9 @@ Use the link displayed in the terminal to open JupyterLab in a web browser.
 
 ## 2. Configure the LLM API
 
-Open `api_config.py` in the repository folder and edit the values at the top of the file. Both the notebook and the standalone Python script read this file.
+Open `api_config.py` in the repository folder and paste your OpenRouter key into `API_KEY`. The provider, model ID, and endpoint are already set for OpenRouter. Both the notebook and the standalone Python script read this file.
 
-- Set `PROVIDER` to `openai`, `anthropic`, or `openai_compatible`.
-- Set `MODEL` to the exact model ID you may use.
-- Paste the key into `API_KEY`.
-- For a school-hosted OpenAI-compatible API, paste its URL into `BASE_URL`; otherwise leave it blank.
+The current settings are `PROVIDER = "openai_compatible"`, `MODEL = "openai/gpt-5.6-luna"`, and `BASE_URL = "https://openrouter.ai/api/v1"`. Change these only if you use a different provider or model.
 
 Do not paste an API key in the notebook or include a real key in a commit. Before sharing or pushing changes, restore the placeholder value in `API_KEY`.
 
