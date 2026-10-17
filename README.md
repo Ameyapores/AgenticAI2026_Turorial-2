@@ -67,7 +67,7 @@ In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Select the Py
 
 The notebook stores previous outputs. This copy may show an old `.env` configuration error until its outputs are cleared. In VS Code, select the local `.venv` kernel; a Jupyter Server password is not needed for that local kernel.
 
-The parameter exercise is intended to be run before the LLM sections. Running all notebook cells also makes model calls in the final sections. One paired demonstration uses approximately 18 calls plus possible retries, subject to `LAB_MAX_MODEL_CALLS`.
+The parameter exercise is intended to be run before the language-model sections. Running all notebook cells also makes model calls in the final sections. One paired demonstration uses approximately 18 calls plus possible retries. The default safety cap is 35 calls; change `MAX_MODEL_CALLS` in `api_config_local.py` for a local class run if needed.
 
 ## 4. The experiment you will run
 
@@ -91,7 +91,7 @@ The paired difference between RL and the state-aware rule is 8.09 reward points,
 
 ### Change one number
 
-Section 3 contains:
+Section 4 contains:
 
 ```python
 TRY_TRAIN_EPISODES = 100  # Try 500, 3_000, 12_000

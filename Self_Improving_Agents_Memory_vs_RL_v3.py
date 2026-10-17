@@ -167,7 +167,7 @@ Saved lessons from earlier runs: {memory if memory else '(none)'}
 Choose the next action to maximize the FINAL total reward rather than immediate gain.
 Respond with JSON: {{"action":"REST|STEADY|BOOST","reason":"short explanation"}}.
 Do not invent experiment observations.'''
-        response = ask_json(prompt, max_tokens=450)
+        response = ask_json(prompt, max_tokens=1200)
         action = str(response.get('action','')).strip().upper()
         if action not in ACTIONS:
             raise ValueError(f'Unknown action returned by live LLM: {response!r}')
