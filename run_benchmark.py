@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from simulator import train_q_learning, evaluate_many, report
 
 HERE = Path(__file__).resolve().parent
+OUTPUT_DIR = HERE / 'solutions'
+OUTPUT_DIR.mkdir(exist_ok=True)
 NAVY = '#1d3768'
 BRONZE = '#b97946'
 SLATE = '#a0aabd'
@@ -25,7 +27,7 @@ for label,q in policies.items():
     name = 'RL' if q is not None else label
     raw[label] = evaluate_many({name:q}, seeds=range(10000,11000))[name]
 summary = report(raw)
-summary.to_csv(HERE/'benchmark_summary.csv',index=False)
+summary.to_csv(OUTPUT_DIR/'benchmark_summary.csv',index=False)
 print(summary.to_string(index=False))
 
 adv = raw['RL learned policy']-raw['State-aware rule']
@@ -41,7 +43,7 @@ ax.invert_yaxis(); ax.set_xlabel('Mean total reward across 1,000 held-out campai
 ax.set_title('RL learns better decisions in this synthetic process')
 for i,x in enumerate(val):ax.text(x+1,i,f'{x:.1f}',va='center',fontweight='bold')
 ax.set_xlim(0,90);ax.spines[['top','right']].set_visible(False)
-fig.tight_layout();fig.savefig(HERE/'benchmark_results.png',dpi=180);plt.close(fig)
+fig.tight_layout();fig.savefig(OUTPUT_DIR/'benchmark_results.png',dpi=180);plt.close(fig)
 
 checkpoints=[100,500,3000,12000]
 train_seeds=[7,11,23,31,42]
@@ -53,7 +55,7 @@ for episodes in checkpoints:
         rows.append({'training_episodes':episodes,'training_seed':tr_seed,
                      'heldout_mean':float(rets.mean())})
 progress=pd.DataFrame(rows)
-progress.to_csv(HERE/'learning_progress.csv',index=False)
+progress.to_csv(OUTPUT_DIR/'learning_progress.csv',index=False)
 print('\nAcross training seeds:')
 print(progress.groupby('training_episodes').heldout_mean.agg(['mean','std']).round(2).to_string())
 
@@ -70,7 +72,7 @@ ax.set_xticks(x,[format(n,',') for n in checkpoints]);ax.set_xlabel('Training ca
 ax.set_ylabel('Mean total reward (held-out)');ax.set_ylim(50,82)
 ax.set_title('Learning improves with experience')
 ax.spines[['top','right']].set_visible(False);ax.legend(loc='lower right')
-fig.tight_layout();fig.savefig(HERE/'learning_convergence.png',dpi=180);plt.close(fig)
+fig.tight_layout();fig.savefig(OUTPUT_DIR/'learning_convergence.png',dpi=180);plt.close(fig)
 
 results={
   'environment':'Synthetic 8-step resource and stress control process',
@@ -80,4 +82,4 @@ results={
   'paired_advantage_vs_state_aware':{'mean':float(adv.mean()),'approx_ci95_halfwidth':float(1.96*adv.std(ddof=1)/np.sqrt(len(adv)))},
   'learning_progress_by_training_seed':rows
 }
-(HERE/'benchmark_results.json').write_text(json.dumps(results,indent=2))
+(OUTPUT_DIR/'benchmark_results.json').write_text(json.dumps(results,indent=2))

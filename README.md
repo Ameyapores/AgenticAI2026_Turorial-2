@@ -53,7 +53,7 @@ The default `.env.example` includes placeholders, **not working credentials**. D
 
 ## 3. Open the notebook
 
-In JupyterLab, open `solutions/Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. This is the completed reference solution; participants can consult it while working through the exercise. Select the Python kernel from `.venv` (Jupyter may prompt you to install/register it). Start with **Run All**. The first code cell checks the school API with a real call; it will stop if the key or endpoint is invalid.
+In JupyterLab, open `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`. Select the Python kernel from `.venv` (Jupyter may prompt you to install/register it). Start with **Run All**. The first code cell checks the school API with a real call; it will stop if the key or endpoint is invalid.
 
 **During the tutorial, the presenter will pause at the parameter exercise**. If you use Run All before class, the notebook will also make live model calls in its last sections. Expect approximately 18 calls plus retries, subject to `LAB_MAX_MODEL_CALLS`.
 
@@ -102,14 +102,13 @@ Sections 4 and 5 require the school's live LLM API. They:
 
 ## Files included
 
-- `solutions/Self_Improving_Agents_Memory_vs_RL_v3.ipynb`: completed reference notebook.
-- `solutions/Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone completed reference script.
+- `Self_Improving_Agents_Memory_vs_RL_v3.ipynb`: tutorial notebook.
+- `Self_Improving_Agents_Memory_vs_RL_v3.py`: standalone Python version of the tutorial.
 - `simulator.py`: synthetic process and RL learner.
 - `llm_client.py`: school API interface with call limit.
 - `.env.example`, `.gitignore`, `requirements.txt`: setup.
 - `run_benchmark.py`: reproducibly regenerate all benchmark numbers with **no API calls**.
-- `benchmark_results.png`, `learning_convergence.png`: the actual figures used in the updated deck.
-- `benchmark_summary.csv`, `learning_progress.csv`, `benchmark_results.json`: results and seeds.
+- `solutions/`: benchmark figures, CSVs, and JSON results for participant reference.
 - `INSTRUCTOR_GUIDE.md`: teaching plan and scientific caveats.
 
 ## Troubleshooting
