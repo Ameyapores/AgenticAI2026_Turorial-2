@@ -4,14 +4,9 @@
 
 When does a learned decision rule improve results compared with a fixed rule or a language model that chooses actions from the available information?
 
-This repository contains a synthetic eight-step resource-and-stress control experiment. It is not a validated physical or biological model. The lab compares:
+This repository contains a synthetic eight-step resource-and-stress control experiment. It is not a validated physical or biological model. See [Policy descriptions](POLICY_DESCRIPTION.md) for the policies, decision rules, and language-model prompts used in the lab.
 
-1. Random interventions.
-2. Always STEADY, a fixed protocol.
-3. Fixed alternating BOOST / REST, another fixed protocol.
-4. A state-aware rule that uses the observed nutrient and stress values.
-5. A reinforcement-learning (RL) controller that learns values for state-action combinations; the language-model weights do not change.
-6. A language model using current information, compared with the same model supplied with lessons from six earlier runs.
+![Overview of the simulated experiment](images/experiment.png)
 
 The first five methods are tested on 1,000 simulated runs not used for training. The language-model demonstration uses one paired seed, so it cannot establish a general performance difference. The RL controller receives more simulated training runs than the language-model memory condition.
 
@@ -113,20 +108,6 @@ The memory and language-model sections require the live API. They:
 The language-model comparison consists of one run per condition and is not an estimate of typical language-model performance.
 
 See [Policy descriptions](POLICY_DESCRIPTION.md) for the rules, prompts, and evaluation settings.
-
-## Instructional sequence
-
-The following sequence is suitable for a 25- to 30-minute session.
-
-| Segment | Suggested time | Activity |
-|---|---:|---|
-| Motivation | 3 min | Introduce resource depletion and stress as sequential state variables. |
-| Reference benchmark | 5 min | Run Section 2 and examine the 1,000-seed comparison. |
-| Parameter exercise | 5 min | Set `TRY_TRAIN_EPISODES=100`, compare it with 12,000, and optionally repeat at 3,000. |
-| Learning curve | 3 min | Review the five-training-seed results and their dispersion. |
-| Memory construction | 4 min | Use the API to summarize six earlier runs as reusable guidance. |
-| Language-model comparison | 6 min | Run the current-information and memory conditions once, then inspect the action traces. |
-| Discussion | 3 min | Discuss the assumptions needed to learn from repeated runs. |
 
 ## Reproducible benchmark results
 
