@@ -8,7 +8,7 @@ Restore the API key placeholder before sharing or pushing repository changes.
 PROVIDER = "openai"
 
 # Replace with the exact model ID that your API key can access.
-MODEL = "gpt-4.1-mini"
+MODEL = "gpt5.6-luna light"
 
 # Paste your API key here, between the quotes.
 API_KEY = "PASTE_API_KEY_HERE"
