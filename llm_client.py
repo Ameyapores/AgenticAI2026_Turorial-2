@@ -95,15 +95,25 @@ def ask_text(prompt: str, *, max_tokens: int=800, system: str | None=None) -> st
         from openai import OpenAI
         client = OpenAI(api_key=cfg.key, base_url=cfg.base_url)
         messages=[{'role':'system','content':system},{'role':'user','content':prompt}]
+        request = dict(model=cfg.model, messages=messages, max_tokens=max_tokens)
+        # Short action-selection requests need a visible JSON answer. On OpenRouter,
+        # disabling hidden reasoning prevents the output allowance being exhausted
+        # before the model emits that answer.
+        if cfg.base_url and 'openrouter.ai' in cfg.base_url:
+            request['reasoning_effort'] = 'none'
         try:
-            r=client.chat.completions.create(model=cfg.model, messages=messages,
-                 max_tokens=max_tokens)
+            r=client.chat.completions.create(**request)
         except Exception as exc:
             msg=str(exc).lower()
-            if 'max_tokens' not in msg and 'unsupported' not in msg:
+            if ('reasoning' in msg or 'unsupported' in msg) and 'reasoning_effort' in request:
+                request.pop('reasoning_effort')
+                r=client.chat.completions.create(**request)
+            elif 'max_tokens' in msg:
+                request.pop('max_tokens')
+                request['max_completion_tokens'] = max_tokens
+                r=client.chat.completions.create(**request)
+            else:
                 raise
-            r=client.chat.completions.create(model=cfg.model, messages=messages,
-                 max_completion_tokens=max_tokens)
         result=r.choices[0].message.content or ''
     if not result.strip():
         raise RuntimeError('The model returned no text. Check the model and token budget.')
